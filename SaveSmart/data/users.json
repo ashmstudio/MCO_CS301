@@ -24,5 +24,11 @@
     "email": "ashcal@gmail.com",
     "password_hash": "scrypt:32768:8:1$BkmxN1INYOBObwBm$53de0423dcbc83899303c826c701c4815f7cd2e6feba93a72f8afa369dd77b62ff2a6ab0d53fe6587555581b9bf6ee442bfb200222678b0f2b36c295f619631a",
     "registration_date": "September 15, 2026"
+  },
+  {
+    "name": "Aisha Muso",
+    "email": "aisha@gmail.com",
+    "password_hash": "scrypt:32768:8:1$loeo7v513Ap4U29t$f0c76043676023571bc41a650ca0179461a61e140c69c8f95864e01f8aab8b7f717be59e6691a6d3cdfdbf9d59c0e6ecd2a740dd3cb4434c776ad68dbf9bbffc",
+    "registration_date": "September 17, 2026"
   }
 ]
