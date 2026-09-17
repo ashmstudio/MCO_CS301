@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Ash Muso",
+    "email": "ash@example.com",
+    "password_hash": "scrypt:32768:8:1$xqkBgyIWDNL4ScTj$55b5bc7084e1dd9bef431d7982fe7820859975b38cccdf28a676b63ad28acb951d5beb1e7e27e636bbe64072d163e470d4c702e36a6effaaef81425012643834"
+  },
+  {
+    "name": "ashmuso",
+    "email": "ash@gmail.com",
+    "password_hash": "scrypt:32768:8:1$wWxm9IwzpgXQEfIP$1d539667afa49178d859b46bc6d8218aebb0a57394350d3993f68f211cba10bcf9111f88b05000ea691225fc476885c2443bac0cd947019e2873e559255506da"
+  },
+  {
+    "name": "Aisah",
+    "email": "aisah@example.com",
+    "password_hash": "scrypt:32768:8:1$UPDfYLSrjT45wUk7$532021e07a7b99d6ca9afc4272a4e379fedc445d8d89323af5b0fad4df390417e7147cbc2a9ed873ab9a174ba203975110a5c272dd1bdf1eb9f4a355ab05bcb8"
+  },
+  {
+    "name": "Aisah",
+    "email": "aisah2@example.com",
+    "password_hash": "scrypt:32768:8:1$wuo4OHYmlcsh0Qqs$cc077379ac48c2ab43c9e20f29b15ffe2eed3403fcb040c9271a4e2da45a6760f59c0194da1f79355dc92a828cd827e317641a7085ff93a3656a327f6ed3a09a"
+  },
+  {
+    "name": "AshCal",
+    "email": "ashcal@gmail.com",
+    "password_hash": "scrypt:32768:8:1$BkmxN1INYOBObwBm$53de0423dcbc83899303c826c701c4815f7cd2e6feba93a72f8afa369dd77b62ff2a6ab0d53fe6587555581b9bf6ee442bfb200222678b0f2b36c295f619631a",
+    "registration_date": "September 15, 2026"
+  }
+]

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Savings Assessment System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">SaveSmart</div>
+
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-btn active" data-target="home">Home</button>
+          <button class="nav-btn" data-target="assessment">Assessment</button>
+          <button class="nav-btn" data-target="how-it-works">How It Works</button>
+          <button class="nav-btn" data-target="about">About</button>
+        </nav>
+
+        <div class="auth-nav">
+          <button id="registerNavButton" class="nav-cta" data-target="register">Register</button>
+          <button id="loginNavButton" class="nav-cta secondary-nav-btn" data-target="login">Login</button>
+          <button id="logoutNavButton" class="nav-cta hidden">Log Out</button>
+        </div>
+      </header>
+
+      <main class="app-body">
+        <section id="home" class="section active">
+          <div class="hero">
+            <div class="hero-copy">
+              <p class="eyebrow">STUDENT SAVINGS ASSESSMENT</p>
+              <h1>Make every peso<br />move you forward.</h1>
+              <p class="lead">
+                Plan your savings, understand your spending, and see if your financial goal is achievable.
+              </p>
+              <div class="cta-row">
+                <button id="registerHomeButton" class="primary-btn" data-target="register">Register</button>
+              </div>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+              <div class="coin-stack coin-one"></div>
+              <div class="coin-stack coin-two"></div>
+              <div class="coin-stack coin-three"></div>
+              <div class="wallet-card">
+                <span>Goal</span>
+                <strong>Save smarter</strong>
+              </div>
+            </div>
+          </div>
+          <div class="what-you-can-do">
+            <div class="steps-row">
+              <div class="step-card"><h3>PLAN</h3><p>Understand your monthly savings.</p></div>
+              <div class="step-card"><h3>CHECK</h3><p>See if your savings goal is achievable.</p></div>
+              <div class="step-card"><h3>TRACK</h3><p>Review your previous assessments.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="register" class="section">
+          <div class="panel small-panel">
+            <div class="section-header compact-header">
+              <p class="eyebrow">ACCOUNT</p>
+              <h2>Create Your Account</h2>
+              <p>Create an account to begin your savings assessment.</p>
+            </div>
+
+            <form id="registerForm" class="form-stack" novalidate>
+              <div class="field-group">
+                <label for="registerName">Full Name</label>
+                <input id="registerName" name="name" type="text" placeholder="Enter your full name" />
+              </div>
+
+              <div class="field-group">
+                <label for="registerEmail">Email</label>
+                <input id="registerEmail" name="email" type="email" placeholder="Enter your email" />
+              </div>
+
+              <div class="field-group">
+                <label for="registerPassword">Password</label>
+                <input id="registerPassword" name="password" type="password" placeholder="Create a password" />
+              </div>
+
+              <div class="field-group">
+                <label for="registerConfirmPassword">Confirm Password</label>
+                <input id="registerConfirmPassword" name="confirmPassword" type="password" placeholder="Confirm your password" />
+              </div>
+
+              <div id="registerMessage" class="form-message" aria-live="polite"></div>
+              <button type="submit" class="primary-btn full-width">Create Account</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="login" class="section">
+          <div class="panel small-panel">
+            <div class="section-header compact-header">
+              <p class="eyebrow">ACCOUNT</p>
+              <h2>Log In</h2>
+              <p>Use your registered account to continue.</p>
+            </div>
+            <form id="loginForm" class="form-stack" novalidate>
+              <div class="field-group">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" placeholder="Enter your email" />
+              </div>
+              <div class="field-group">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" placeholder="Enter your password" />
+              </div>
+              <div id="loginMessage" class="form-message" aria-live="polite"></div>
+              <button type="submit" class="primary-btn full-width">Login</button>
+              <button id="loginRegisterButton" type="button" class="secondary-btn full-width">Create an Account</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="assessment" class="section">
+          <div class="panel">
+            <div id="assessmentNotice" class="notice hidden">
+              <p>Please log in first to continue.</p>
+              <div class="cta-row">
+                <button id="loginNowButton" class="primary-btn" data-target="login">Log In</button>
+                <button id="registerNowButton" class="secondary-btn" data-target="register">Register</button>
+              </div>
+            </div>
+
+            <div id="assessmentWizard" class="assessment-wizard hidden">
+              <div class="wizard-header">
+                <div class="step-indicator" id="stepIndicator">Step 1 of 6</div>
+              </div>
+
+              <div class="assessment-step active" data-step="1">
+                <div class="section-header">
+                  <p class="eyebrow">ASSESSMENT</p>
+                  <h2>Step 1 – Student Information</h2>
+                </div>
+                <div class="field-group">
+                  <label for="studentName">Student Name</label>
+                  <input id="studentName" name="studentName" type="text" placeholder="Student name" />
+                </div>
+              </div>
+
+              <div class="assessment-step" data-step="2">
+                <div class="section-header">
+                  <p class="eyebrow">ASSESSMENT</p>
+                  <h2>Step 2 – Allowance / Income</h2>
+                </div>
+                <div class="field-group">
+                  <label for="monthlyAllowance">Monthly Allowance</label>
+                  <input id="monthlyAllowance" name="monthlyAllowance" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                </div>
+                <div class="field-group">
+                  <label for="allowanceFrequency">How often do you receive your allowance?</label>
+                  <select id="allowanceFrequency" name="allowanceFrequency">
+                    <option value="weekly">Weekly</option>
+                    <option value="every_2_weeks">Every 2 weeks</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="assessment-step" data-step="3">
+                <div class="section-header">
+                  <p class="eyebrow">ASSESSMENT</p>
+                  <h2>Step 3 – Monthly Expenses</h2>
+                </div>
+                <div class="grid-two">
+                  <div class="field-group">
+                    <label for="food">Food / Meals</label>
+                    <input id="food" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="transportation">Transportation</label>
+                    <input id="transportation" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="school">School Expenses</label>
+                    <input id="school" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="internet">Mobile Data / Internet</label>
+                    <input id="internet" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="personal">Personal Expenses</label>
+                    <input id="personal" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="other">Other Expenses</label>
+                    <input id="other" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="assessment-step" data-step="4">
+                <div class="section-header">
+                  <p class="eyebrow">ASSESSMENT</p>
+                  <h2>Step 4 – Savings Goal</h2>
+                </div>
+                <div class="grid-two">
+                  <div class="field-group">
+                    <label for="currentSavings">Current Savings</label>
+                    <input id="currentSavings" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="goalPurpose">What are you saving for?</label>
+                    <select id="goalPurpose">
+                      <option value="School Expenses">School Expenses</option>
+                      <option value="Gadget / Laptop">Gadget / Laptop</option>
+                      <option value="Emergency Fund">Emergency Fund</option>
+                      <option value="Travel">Travel</option>
+                      <option value="Personal Goal">Personal Goal</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="savingsGoal">Savings Goal</label>
+                    <input id="savingsGoal" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="savingPeriod">Saving Period</label>
+                    <input id="savingPeriod" type="number" min="1" step="1" placeholder="Enter number" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="assessment-step" data-step="5">
+                <div class="section-header">
+                  <p class="eyebrow">ASSESSMENT</p>
+                  <h2>Step 5 – Savings Plan</h2>
+                </div>
+                <div class="field-group">
+                  <label for="plannedMonthlySavings">Planned Monthly Savings</label>
+                  <input id="plannedMonthlySavings" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                </div>
+              </div>
+
+              <div id="assessmentMessage" class="form-message" aria-live="polite"></div>
+
+              <div class="wizard-actions">
+                <button type="button" id="assessmentBackBtn" class="secondary-btn hidden">Back</button>
+                <button type="button" id="assessmentNextBtn" class="primary-btn">Next</button>
+              </div>
+            </div>
+
+            <div id="accountPanel" class="account-panel hidden">
+              <h3>My Account</h3>
+              <p id="accountName">Student</p>
+              <button id="clearAccountButton" class="secondary-btn small-btn">Clear Account</button>
+            </div>
+
+            <div class="history-panel">
+              <h3>Previous Assessment</h3>
+              <div id="historyList" class="history-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="result" class="section">
+          <div class="panel">
+            <div class="section-header">
+              <p class="eyebrow">RESULT</p>
+              <h2>Your Savings Assessment</h2>
+            </div>
+
+            <div id="resultSummary" class="result-summary"></div>
+
+            <div id="statusBadge" class="status-badge"></div>
+            <div id="recommendationBox" class="recommendation-box"></div>
+
+            <div class="sub-section">
+              <h3>Try Another Plan</h3>
+              <form id="recalculateForm" class="form-stack compact-form" novalidate>
+                <div class="grid-two">
+                  <div class="field-group">
+                    <label for="recalcPlan">Planned Monthly Savings</label>
+                    <input id="recalcPlan" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="recalcPeriod">Saving Period</label>
+                    <input id="recalcPeriod" type="number" min="1" step="1" placeholder="Enter number" />
+                  </div>
+                </div>
+                <button type="submit" class="primary-btn full-width">Recalculate</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section id="account" class="section">
+          <div class="panel">
+            <div class="section-header compact-header">
+              <p class="eyebrow">MY ACCOUNT</p>
+              <h2>Student Profile</h2>
+            </div>
+
+            <div class="account-tabs" aria-label="Account sections">
+              <button type="button" class="account-tab active" data-account-tab="profile">PROFILE</button>
+              <button type="button" class="account-tab" data-account-tab="savings">SAVINGS</button>
+              <button type="button" class="account-tab" data-account-tab="history">HISTORY</button>
+            </div>
+
+            <div id="accountProfileTab" class="account-tab-panel active">
+              <div class="account-card">
+                <h3>Profile</h3>
+                <div class="account-grid">
+                  <div class="account-row"><span>Full Name</span><strong id="accountFullName">-</strong></div>
+                  <div class="account-row"><span>Email</span><strong id="accountEmail">-</strong></div>
+                  <div class="account-row"><span>Account registration date</span><strong id="accountRegistrationDate">-</strong></div>
+                  <div class="account-row"><span>Account status</span><strong id="accountStatus">Registered</strong></div>
+                </div>
+              </div>
+
+              <div id="profileEditForm" class="profile-edit-box">
+                <h3>Edit Profile</h3>
+                <div class="field-group">
+                  <label for="editAccountName">Full Name</label>
+                  <input id="editAccountName" type="text" placeholder="Enter full name" />
+                </div>
+                <div class="field-group">
+                  <label for="editAccountEmail">Email</label>
+                  <input id="editAccountEmail" type="email" placeholder="Enter email" />
+                </div>
+                <div class="account-action-row">
+                  <button id="saveProfileBtn" type="button" class="primary-btn">Save Changes</button>
+                </div>
+                <div id="accountProfileMessage" class="form-message" aria-live="polite"></div>
+              </div>
+            </div>
+
+            <div id="accountSavingsTab" class="account-tab-panel">
+              <div class="account-card">
+                <h3>My Savings Information</h3>
+                <div class="account-grid">
+                  <div class="account-row"><span>Current Savings</span><strong id="accountCurrentSavings">-</strong></div>
+                  <div class="account-row"><span>Savings Goal</span><strong id="accountSavingsGoal">-</strong></div>
+                  <div class="account-row"><span>Goal Purpose</span><strong id="accountGoalPurpose">-</strong></div>
+                  <div class="account-row"><span>Saving Period</span><strong id="accountSavingPeriod">-</strong></div>
+                  <div class="account-row"><span>Planned Monthly Savings</span><strong id="accountPlannedSavings">-</strong></div>
+                </div>
+              </div>
+
+              <div class="account-card">
+                <h3>Assessment Summary</h3>
+                <div class="account-grid">
+                  <div class="account-row"><span>Last assessment date</span><strong id="accountAssessmentDate">-</strong></div>
+                  <div class="account-row"><span>Last assessment result</span><strong id="accountAssessmentResult">-</strong></div>
+                  <div class="account-row"><span>Available Money</span><strong id="accountAvailableMoney">-</strong></div>
+                  <div class="account-row"><span>Required Monthly Savings</span><strong id="accountRequiredSavings">-</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="accountHistoryTab" class="account-tab-panel">
+              <div class="account-card">
+                <h3>Assessment History</h3>
+                <div id="accountHistoryList" class="history-list"></div>
+              </div>
+            </div>
+
+            <div class="account-actions">
+              <button id="takeAssessmentBtn" type="button" class="primary-btn">Take Assessment</button>
+              <button id="accountLogoutBtn" type="button" class="secondary-btn">Log Out</button>
+              <button id="clearAssessmentDataBtn" type="button" class="secondary-btn">Clear Assessment Data</button>
+              <button id="clearAccountBtn" type="button" class="secondary-btn">Clear Account</button>
+              <button id="backToHomeBtn" type="button" class="primary-btn">Back to Home</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" class="section">
+          <div class="panel">
+            <div class="section-header">
+              <p class="eyebrow">HOW IT WORKS</p>
+              <h2>Simple steps</h2>
+            </div>
+
+            <div class="steps-row">
+              <div class="step-card">
+                <span class="step-number">01</span>
+                <h3>REGISTER</h3>
+                <p>Create your account to begin.</p>
+              </div>
+              <div class="step-card">
+                <span class="step-number">02</span>
+                <h3>ASSESS</h3>
+                <p>Enter your allowance, expenses, savings, and goal.</p>
+              </div>
+              <div class="step-card">
+                <span class="step-number">03</span>
+                <h3>PLAN</h3>
+                <p>Get your savings assessment and recommendation.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" class="section">
+          <div class="panel narrow-panel">
+            <div class="section-header compact-header">
+              <p class="eyebrow">ABOUT</p>
+              <h2>Student Savings Assessment System</h2>
+              <p>A simple tool that helps students understand their spending and savings goals.</p>
+              <div class="creator-block">
+                <span>CREATED BY</span>
+                <h3>ASH MUSO</h3>
+              </div>
+              <p>For questions or if you experience any problems with the system, please contact the creator.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer">All Rights Reserved | Ash Muso</footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js', v='2') }}"></script>
+  </body>
+</html>
