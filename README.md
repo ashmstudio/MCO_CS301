@@ -1,48 +1,42 @@
-<<<<<<< Updated upstream
+# SaveSmart
 
-=======
-# MCO1: Student Savings Goal Assessment System
+SaveSmart is a simple savings-planning system developed for our MCO project.
 
-This project demonstrates the same Student Savings Goal Assessment System using two programming approaches for CS 301 MCO 1:
+## Project Overview
 
-- `SaveSmart/procedural_system.js` is the JavaScript procedural version. It uses functions, variables, objects, conditions, and loops without classes.
-- `SaveSmart/oop_system.py` is the Python object-oriented version. It uses `SavingsAssessmentInput`, `SavingsAssessmentResult`, and `SavingsAssessmentSystem` classes.
+SaveSmart helps users create a basic savings plan using their financial information, such as income, expenses, savings goals, and target period.
 
-Both versions accept the same input and use the same calculations and decision rules. The Flask application in `SaveSmart/app.py` provides the web interface and uses the Python OOP implementation for its assessment route.
+The system demonstrates the same savings-planning process using two different programming approaches.
 
-## System input
+## Programming Approaches
 
-The system processes a student's name, allowance, allowance frequency, monthly expenses, current savings, goal purpose, savings goal, saving period, and planned monthly savings.
+### Procedural Programming
 
-It produces estimated monthly income, total expenses, available money, required monthly savings, expected savings, a `GREEN`, `YELLOW`, or `RED` status, and a recommendation.
+The procedural version uses functions, variables, conditions, and calculations to process the user's financial information and generate a savings result.
 
-## Run the two implementations
+### Object-Oriented Programming
 
-From the repository root:
+The OOP version organizes the system using classes, objects, methods, and encapsulation while performing the same savings-planning process.
 
-```powershell
-node SaveSmart\procedural_system.js
-python SaveSmart\oop_system.py
-```
+## System Process
 
-The two commands use the same sample input and should produce equivalent result values.
+1. Enter the required financial information.
+2. Calculate the available amount for savings.
+3. Determine the required savings amount.
+4. Compare the available savings with the target.
+5. Display the resulting savings plan.
 
-## Run the web interface
+## Technologies Used
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python SaveSmart\app.py
-```
+- JavaScript
+- Python
+- HTML
+- CSS
 
-Open http://127.0.0.1:5000 in a browser.
+## MCO Objective
 
-## Verify the application
+The project demonstrates how the same system can be implemented using different programming approaches while maintaining consistent inputs, processing, calculations, and expected outputs.
 
-With the app running, execute:
+## Project Name
 
-```powershell
-python SaveSmart\verify_app.py
-```
->>>>>>> Stashed changes
+**SaveSmart**
