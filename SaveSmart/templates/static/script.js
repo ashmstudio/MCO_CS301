@@ -8,23 +8,22 @@ const registerMessage = document.getElementById('registerMessage');
 const assessmentMessage = document.getElementById('assessmentMessage');
 const assessmentNotice = document.getElementById('assessmentNotice');
 const assessmentWizard = document.getElementById('assessmentWizard');
-const studentNameInput = document.getElementById('studentName');
 const accountPanel = document.getElementById('accountPanel');
 const accountName = document.getElementById('accountName');
 const resultSummary = document.getElementById('resultSummary');
 const statusBadge = document.getElementById('statusBadge');
 const recommendationBox = document.getElementById('recommendationBox');
-const wizardResultSummary = document.getElementById('wizardResultSummary');
-const wizardStatusBadge = document.getElementById('wizardStatusBadge');
-const wizardRecommendationBox = document.getElementById('wizardRecommendationBox');
 const historyList = document.getElementById('historyList');
 const historyPanel = document.querySelector('.history-panel');
 const stepIndicator = document.getElementById('stepIndicator');
 const assessmentBackBtn = document.getElementById('assessmentBackBtn');
+const assessmentResetBtn = document.getElementById('assessmentResetBtn');
 const assessmentNextBtn = document.getElementById('assessmentNextBtn');
 const assessmentSteps = Array.from(document.querySelectorAll('.assessment-step'));
 const accountTabButtons = Array.from(document.querySelectorAll('.account-tab'));
 const accountTabPanels = Array.from(document.querySelectorAll('.account-tab-panel'));
+const accountActionsMenuBtn = document.getElementById('accountActionsMenuBtn');
+const accountActionsPanel = document.getElementById('accountActionsPanel');
 const accountFullName = document.getElementById('accountFullName');
 const accountEmail = document.getElementById('accountEmail');
 const accountRegistrationDate = document.getElementById('accountRegistrationDate');
@@ -48,6 +47,139 @@ const state = {
   lastAssessment: null,
   currentStep: 1,
 };
+
+const dashboardNavItems = Array.from(document.querySelectorAll('[data-dashboard-view]'));
+const dashboardPanels = Array.from(document.querySelectorAll('[data-dashboard-panel]'));
+
+function moveExistingAssessmentIntoDashboard() {
+  const wizardHost = document.getElementById('privateAssessmentWizardHost');
+  const resultHost = document.getElementById('privateResultHost');
+  const resultSection = document.getElementById('result');
+
+  if (wizardHost && assessmentWizard) {
+    wizardHost.appendChild(assessmentWizard);
+  }
+  if (resultHost && resultSection) {
+    resultHost.appendChild(resultSection.firstElementChild);
+    resultSection.classList.add('dashboard-result-source');
+  }
+}
+
+function showDashboardView(viewName) {
+  if (viewName === 'assessment') {
+    showSection('account');
+    dashboardPanels.forEach((panel) => {
+      panel.classList.toggle('active', panel.dataset.dashboardPanel === 'assessment');
+    });
+    dashboardNavItems.forEach((item) => {
+      item.classList.toggle('active', item.dataset.dashboardView === 'assessment');
+    });
+    updateAssessmentAccess();
+    return;
+  }
+
+  showSection('account');
+  dashboardPanels.forEach((panel) => {
+    panel.classList.toggle('active', panel.dataset.dashboardPanel === viewName);
+  });
+  dashboardNavItems.forEach((item) => {
+    item.classList.toggle('active', item.dataset.dashboardView === viewName);
+  });
+}
+
+async function loadPrivateDashboard() {
+  if (!state.currentUser) {
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/account');
+    const data = await response.json();
+    if (!data.logged_in) {
+      return;
+    }
+
+    const user = data.user || {};
+    const summary = data.summary || {};
+    const assessments = data.assessments || [];
+    const firstName = (user.name || 'there').trim().split(/\s+/)[0];
+    const hasAssessment = assessments.length > 0;
+
+    document.getElementById('privateDashboardFirstName').textContent = firstName;
+    document.getElementById('dashboardUserName').textContent = user.name || 'Student';
+    document.getElementById('dashboardUserEmail').textContent = user.email || 'Account';
+    document.getElementById('dashboardAvatar').textContent = firstName.charAt(0).toUpperCase() || 'S';
+    document.getElementById('dashboardDate').textContent = new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+    document.getElementById('privateAssessmentStatus').textContent = hasAssessment ? 'Completed' : 'Not completed';
+    document.getElementById('privateAssessmentHint').textContent = hasAssessment ? 'Your latest assessment is ready.' : 'Begin with your first assessment.';
+    document.getElementById('privatePlanStatus').textContent = hasAssessment ? 'Created' : 'Not created';
+    document.getElementById('privatePlanHint').textContent = hasAssessment ? 'A plan is saved from your latest result.' : 'Complete an assessment first.';
+    document.getElementById('privateGoalStatus').textContent = hasAssessment ? formatMoney(summary.savings_goal) : 'Not set';
+    document.getElementById('privateGoalHint').textContent = hasAssessment ? (summary.goal_purpose || 'Savings goal') : 'Your goal will appear here.';
+    document.getElementById('privateProgressStatus').textContent = hasAssessment ? 'In progress' : 'Not started';
+    document.getElementById('privateProgressHint').textContent = hasAssessment ? 'Your plan is ready to track.' : 'Progress begins after your plan.';
+
+    const activityEmpty = document.getElementById('privateActivityEmpty');
+    const activityList = document.getElementById('privateActivityList');
+    activityEmpty.classList.toggle('hidden', hasAssessment);
+    activityList.classList.toggle('hidden', !hasAssessment);
+    activityList.innerHTML = assessments.slice(0, 3).map((item) => `<div class="private-activity-item"><strong>${item.date}</strong><span>${item.assessment_status || 'Assessment completed'} · Goal ${formatMoney(item.savings_goal)}</span></div>`).join('');
+
+    document.getElementById('privatePlanEmpty').classList.toggle('hidden', hasAssessment);
+    document.getElementById('privatePlanContent').classList.toggle('hidden', !hasAssessment);
+    document.getElementById('privatePlanPurpose').textContent = summary.goal_purpose || '-';
+    document.getElementById('privatePlanAmount').textContent = formatMoney(summary.planned_monthly_savings);
+    document.getElementById('privatePlanPeriod').textContent = summary.saving_period ? `${summary.saving_period} months` : '-';
+    document.getElementById('privatePlanRequired').textContent = formatMoney(summary.required_monthly_savings);
+
+    document.getElementById('privateGoalEmpty').classList.toggle('hidden', hasAssessment);
+    document.getElementById('privateGoalContent').classList.toggle('hidden', !hasAssessment);
+    document.getElementById('privateGoalPurpose').textContent = summary.goal_purpose || 'Personal goal';
+    document.getElementById('privateGoalAmount').textContent = formatMoney(summary.savings_goal);
+    document.getElementById('privateGoalPeriod').textContent = summary.saving_period ? `${summary.saving_period} month target` : '-';
+
+    document.getElementById('privateProgressEmpty').classList.toggle('hidden', hasAssessment);
+    document.getElementById('privateProgressContent').classList.toggle('hidden', !hasAssessment);
+    const progress = summary.savings_goal ? Math.min(100, Math.round((Number(summary.current_savings || 0) / Number(summary.savings_goal)) * 100)) : 0;
+    document.getElementById('privateProgressBar').style.width = `${progress}%`;
+    document.getElementById('privateProgressLabel').textContent = `${progress}% of your current goal`;
+
+    document.getElementById('privateProfileName').textContent = user.name || '-';
+    document.getElementById('privateProfileEmail').textContent = user.email || '-';
+    document.getElementById('privateProfileDate').textContent = user.registration_date || 'N/A';
+    document.getElementById('privateEditName').value = user.name || '';
+    document.getElementById('privateEditEmail').value = user.email || '';
+    document.getElementById('privateHistoryList').innerHTML = hasAssessment
+      ? assessments.map((item) => `<div class="private-history-item"><strong>${item.date}</strong><span>${item.assessment_status || 'Assessment completed'} · Goal ${formatMoney(item.savings_goal)} · ${formatMoney(item.planned_monthly_savings)}/month</span></div>`).join('')
+      : '<div class="dashboard-empty">No previous activity yet.</div>';
+  } catch (error) {
+    document.getElementById('privateHistoryList').innerHTML = '<div class="dashboard-empty">Unable to load your history right now.</div>';
+  }
+}
+
+async function savePrivateProfile() {
+  const name = document.getElementById('privateEditName').value.trim();
+  const email = document.getElementById('privateEditEmail').value.trim();
+  const message = document.getElementById('privateProfileMessage');
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    setMessage(message, 'Enter a valid name and email.', 'error');
+    return;
+  }
+  try {
+    const response = await fetch('/api/account', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email }) });
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      setMessage(message, data.message || 'Unable to update profile.', 'error');
+      return;
+    }
+    state.currentUser = { ...state.currentUser, name, email };
+    setUserState(state.currentUser);
+    await loadPrivateDashboard();
+    setMessage(message, 'Profile updated successfully.', 'success');
+  } catch (error) {
+    setMessage(message, 'Unable to update profile.', 'error');
+  }
+}
 
 function showSection(sectionId) {
   sections.forEach((section) => {
@@ -76,6 +208,8 @@ function switchAccountTab(tabName) {
   accountTabPanels.forEach((panel) => {
     panel.classList.toggle('active', panel.id === `account${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`);
   });
+  accountActionsPanel.classList.add('hidden');
+  accountActionsMenuBtn.classList.remove('active');
 }
 
 function showAssessmentStep(stepNumber) {
@@ -84,12 +218,12 @@ function showAssessmentStep(stepNumber) {
     step.classList.toggle('active', Number(step.dataset.step) === Number(stepNumber));
   });
 
-  const totalSteps = 5;
+  const totalSteps = 4;
   stepIndicator.textContent = `Step ${stepNumber} of ${totalSteps}`;
   assessmentBackBtn.classList.toggle('hidden', stepNumber === 1);
 
   assessmentNextBtn.classList.remove('hidden');
-  assessmentNextBtn.textContent = stepNumber === totalSteps ? 'Calculate Assessment' : 'Next';
+  assessmentNextBtn.textContent = stepNumber === totalSteps ? 'Assess My Plan' : 'Continue';
 }
 
 function formatMoney(value) {
@@ -102,21 +236,20 @@ function setUserState(user) {
   const isRegistered = Boolean(user && user.name);
 
   if (isRegistered) {
-    registerNavButton.textContent = 'My Account';
-    registerNavButton.dataset.target = 'account';
+    registerNavButton.classList.add('hidden');
     loginNavButton.classList.add('hidden');
     logoutNavButton.classList.remove('hidden');
     accountPanel.classList.remove('hidden');
     accountName.textContent = user.name;
-    studentNameInput.value = user.name;
+    document.getElementById('assessmentDashboardEmail').textContent = user.email || 'Profile ready';
   } else {
+    registerNavButton.classList.remove('hidden');
     registerNavButton.textContent = 'Register';
     registerNavButton.dataset.target = 'register';
     loginNavButton.classList.remove('hidden');
     logoutNavButton.classList.add('hidden');
     accountPanel.classList.add('hidden');
     historyPanel.classList.add('hidden');
-    studentNameInput.value = '';
   }
 }
 
@@ -127,12 +260,10 @@ function updateAssessmentAccess() {
   if (registered) {
     assessmentWizard.classList.remove('hidden');
     notice.classList.add('hidden');
-    studentNameInput.value = state.currentUser.name;
     showAssessmentStep(1);
   } else {
     assessmentWizard.classList.add('hidden');
     notice.classList.remove('hidden');
-    studentNameInput.value = '';
   }
 }
 
@@ -144,12 +275,14 @@ async function fetchCurrentUser() {
     if (data.logged_in) {
       setUserState(data);
       await loadHistory();
-    } else {
+    } else if (!state.currentUser) {
       setUserState(null);
     }
     updateAssessmentAccess();
   } catch (error) {
-    setUserState(null);
+    if (!state.currentUser) {
+      setUserState(null);
+    }
     updateAssessmentAccess();
   }
 }
@@ -162,7 +295,7 @@ async function loadHistory() {
 
     if (!items.length) {
       historyList.innerHTML = '<p>No previous assessments yet.</p>';
-      historyPanel.classList.remove('hidden');
+      historyPanel.classList.add('hidden');
       return;
     }
 
@@ -183,22 +316,37 @@ async function loadHistory() {
 }
 
 function buildAssessmentPayloadFromForm() {
+  const valueOrZero = (id) => {
+    const value = document.getElementById(id).value.trim();
+    return value === '' ? '0' : value;
+  };
+
   return {
-    studentName: document.getElementById('studentName').value,
+    studentName: state.currentUser ? state.currentUser.name : '',
     monthlyAllowance: document.getElementById('monthlyAllowance').value,
     allowanceFrequency: document.getElementById('allowanceFrequency').value,
-    food: document.getElementById('food').value,
-    transportation: document.getElementById('transportation').value,
-    school: document.getElementById('school').value,
-    internet: document.getElementById('internet').value,
-    personal: document.getElementById('personal').value,
-    other: document.getElementById('other').value,
+    food: valueOrZero('food'),
+    transportation: valueOrZero('transportation'),
+    school: valueOrZero('school'),
+    internet: valueOrZero('internet'),
+    personal: valueOrZero('personal'),
+    other: valueOrZero('other'),
     currentSavings: document.getElementById('currentSavings').value,
     goalPurpose: document.getElementById('goalPurpose').value,
     savingsGoal: document.getElementById('savingsGoal').value,
     savingPeriod: document.getElementById('savingPeriod').value,
     plannedMonthlySavings: document.getElementById('plannedMonthlySavings').value,
   };
+}
+
+function resetAssessmentForm() {
+  document.querySelectorAll('#assessmentWizard input, #assessmentWizard select').forEach((field) => {
+    field.value = '';
+  });
+  document.getElementById('allowanceFrequency').value = 'weekly';
+  document.getElementById('goalPurpose').value = 'School Expenses';
+  setMessage(assessmentMessage, 'Assessment form cleared.');
+  showAssessmentStep(1);
 }
 
 function validateNumberField(value, label) {
@@ -216,8 +364,17 @@ function validateAssessmentStep(stepNumber) {
   const values = buildAssessmentPayloadFromForm();
 
   if (stepNumber === 1) {
-    if (!values.studentName || !values.studentName.trim()) {
-      return 'Please enter your name.';
+    if (!values.savingsGoal && values.savingsGoal !== '0') {
+      return 'Please enter your savings goal.';
+    }
+    if (!values.savingPeriod || Number(values.savingPeriod) <= 0) {
+      return 'Please enter a target timeframe greater than 0 months.';
+    }
+    if (!values.currentSavings && values.currentSavings !== '0') {
+      return 'Please enter your current savings, or 0 if you have none.';
+    }
+    if (Number(values.currentSavings) < 0 || Number(values.savingsGoal) < 0) {
+      return 'Please enter valid non-negative amounts.';
     }
     return '';
   }
@@ -252,19 +409,6 @@ function validateAssessmentStep(stepNumber) {
   }
 
   if (stepNumber === 4) {
-    if (!values.savingsGoal && values.savingsGoal !== '0') {
-      return 'Please enter your savings goal.';
-    }
-    if (!values.savingPeriod || Number(values.savingPeriod) <= 0) {
-      return 'Saving period must be greater than 0.';
-    }
-    if (Number(values.currentSavings) < 0 || Number(values.savingsGoal) < 0) {
-      return 'Please enter valid non-negative amounts.';
-    }
-    return '';
-  }
-
-  if (stepNumber === 5) {
     if (!values.plannedMonthlySavings && values.plannedMonthlySavings !== '0') {
       return 'Please enter a planned monthly savings amount.';
     }
@@ -291,7 +435,7 @@ function renderResultView(result) {
     ['Expected Savings', result.expectedSavings],
   ];
 
-  const summaryTarget = wizardResultSummary || resultSummary;
+  const summaryTarget = resultSummary;
   summaryTarget.innerHTML = rows.map(([label, value]) => `
     <div class="summary-row">
       <span>${label}</span>
@@ -305,8 +449,8 @@ function renderResultView(result) {
     RED: 'status-red',
   }[result.status] || 'status-green';
 
-  const badgeTarget = wizardStatusBadge || statusBadge;
-  const recommendationTarget = wizardRecommendationBox || recommendationBox;
+  const badgeTarget = statusBadge;
+  const recommendationTarget = recommendationBox;
   badgeTarget.className = `status-badge ${statusClass}`;
   badgeTarget.textContent = result.statusLabel;
   recommendationTarget.textContent = result.recommendation;
@@ -317,7 +461,7 @@ function renderResultView(result) {
 
 function displayResult(result) {
   renderResultView(result);
-  showSection('result');
+  showDashboardView('result');
   setMessage(assessmentMessage, 'Assessment saved successfully.', 'success');
 }
 
@@ -328,7 +472,7 @@ async function submitAssessment() {
     return;
   }
 
-  if (state.currentStep < 5) {
+  if (state.currentStep < 4) {
     showAssessmentStep(state.currentStep + 1);
     return;
   }
@@ -410,9 +554,11 @@ async function submitRegistration(event) {
     setUserState(data.user);
     updateAssessmentAccess();
     await loadHistory();
-    showSection('assessment');
+    await loadAccountData();
+    await loadPrivateDashboard();
+    showDashboardView('overview');
   } catch (error) {
-    setMessage(registerMessage, 'Unable to create account. Please check your information.', 'error');
+    setMessage(registerMessage, error instanceof Error ? error.message : 'Unable to create account. Please try again.', 'error');
   }
 }
 
@@ -443,7 +589,8 @@ async function submitLogin(event) {
     updateAssessmentAccess();
     await loadHistory();
     await loadAccountData();
-    showSection('home');
+    await loadPrivateDashboard();
+    showDashboardView('overview');
   } catch (error) {
     setMessage(loginMessage, 'Unable to log in. Please try again.', 'error');
   }
@@ -468,6 +615,10 @@ async function handleNavClick(event) {
       updateAssessmentAccess();
       return;
     }
+    await loadPrivateDashboard();
+    showDashboardView('assessment');
+    showAssessmentStep(1);
+    return;
   }
 
   if (target === 'account') {
@@ -476,9 +627,8 @@ async function handleNavClick(event) {
       setMessage(loginMessage, 'Please log in first to continue.', 'error');
       return;
     }
-    showSection('account');
-    switchAccountTab('profile');
-    await loadAccountData();
+    await loadPrivateDashboard();
+    showDashboardView('overview');
     return;
   }
 
@@ -547,6 +697,22 @@ async function loadAccountData() {
     const summary = data.summary || {};
     const assessments = data.assessments || [];
 
+    const firstName = (user.name || 'there').trim().split(/\s+/)[0];
+    document.getElementById('dashboardFirstName').textContent = firstName;
+    document.getElementById('journeyAssessmentStatus').textContent = assessments.length ? 'Complete' : 'Not started';
+    document.getElementById('journeyAssessmentHint').textContent = assessments.length ? 'Your latest assessment is ready.' : 'Begin with your first assessment.';
+    document.getElementById('journeyGoalStatus').textContent = assessments.length ? formatMoney(summary.savings_goal) : 'Not set';
+    document.getElementById('journeyGoalHint').textContent = assessments.length ? (summary.goal_purpose || 'Savings goal') : 'Your goal will appear here.';
+    document.getElementById('journeyPlanStatus').textContent = assessments.length ? 'Created' : 'Not created';
+    document.getElementById('journeyPlanHint').textContent = assessments.length ? 'Your current savings plan is saved.' : 'Complete an assessment to create one.';
+    const activityEmpty = document.getElementById('dashboardActivityEmpty');
+    const activityList = document.getElementById('dashboardActivityList');
+    activityEmpty.classList.toggle('hidden', assessments.length > 0);
+    activityList.classList.toggle('hidden', assessments.length === 0);
+    activityList.innerHTML = assessments.slice(0, 3).map((item) => `
+      <div class="dashboard-activity-item"><strong>${item.date}</strong><span>${item.assessment_status || 'Assessment completed'} · Goal ${formatMoney(item.savings_goal)}</span></div>
+    `).join('');
+
     accountFullName.textContent = user.name || 'N/A';
     accountEmail.textContent = user.email || 'N/A';
     accountRegistrationDate.textContent = user.registration_date || 'N/A';
@@ -570,6 +736,9 @@ async function loadAccountData() {
 
     editAccountName.value = user.name || '';
     editAccountEmail.value = user.email || '';
+    document.getElementById('assessmentDashboardEmail').textContent = user.email || 'Profile ready';
+    document.getElementById('assessmentDashboardHistory').textContent = `${assessments.length} saved`;
+    document.getElementById('profileEditForm').classList.add('hidden');
 
     if (!assessments.length) {
       accountHistoryList.innerHTML = '<p>No previous assessments yet.</p>';
@@ -621,6 +790,7 @@ async function saveProfile() {
     setMessage(accountProfileMessage, 'Profile updated successfully.', 'success');
     state.currentUser = { ...state.currentUser, name, email };
     setUserState(state.currentUser);
+    document.getElementById('profileEditForm').classList.add('hidden');
     await loadAccountData();
     await loadHistory();
   } catch (error) {
@@ -682,9 +852,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('loginRegisterButton').addEventListener('click', () => showSection('register'));
   document.getElementById('loginNowButton').addEventListener('click', () => showSection('login'));
   document.getElementById('registerNowButton').addEventListener('click', () => showSection('register'));
-  document.getElementById('registerHomeButton').addEventListener('click', () => showSection('register'));
-
   assessmentNextBtn.addEventListener('click', submitAssessment);
+  assessmentResetBtn.addEventListener('click', resetAssessmentForm);
   assessmentBackBtn.addEventListener('click', () => {
     if (state.currentStep > 1) {
       showAssessmentStep(state.currentStep - 1);
@@ -696,26 +865,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
-  document.getElementById('takeAssessmentBtn').addEventListener('click', () => {
-    showSection('assessment');
-    showAssessmentStep(1);
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    document.getElementById('profileEditForm').classList.remove('hidden');
+    editAccountName.focus();
+  });
+  document.getElementById('cancelProfileBtn').addEventListener('click', () => {
+    document.getElementById('profileEditForm').classList.add('hidden');
+    setMessage(accountProfileMessage, '');
   });
   document.getElementById('accountLogoutBtn').addEventListener('click', logoutUser);
   document.getElementById('clearAssessmentDataBtn').addEventListener('click', clearAssessmentData);
   document.getElementById('clearAccountBtn').addEventListener('click', clearAccount);
-  document.getElementById('backToHomeBtn').addEventListener('click', () => {
-    showSection('home');
+  accountActionsMenuBtn.addEventListener('click', () => {
+    accountTabButtons.forEach((button) => button.classList.remove('active'));
+    accountTabPanels.forEach((panel) => panel.classList.remove('active'));
+    accountActionsPanel.classList.toggle('hidden');
+    accountActionsMenuBtn.classList.toggle('active');
   });
-
+  document.getElementById('openAccountDashboardBtn').addEventListener('click', async () => {
+    showSection('account');
+    switchAccountTab('profile');
+    await loadAccountData();
+  });
+  document.getElementById('dashboardStartAssessmentBtn').addEventListener('click', () => {
+    showDashboardView('assessment');
+    showAssessmentStep(1);
+  });
+  document.getElementById('manageAccountBtn').addEventListener('click', () => {
+    const management = document.getElementById('accountManagement');
+    management.classList.toggle('hidden');
+    document.getElementById('manageAccountBtn').textContent = management.classList.contains('hidden') ? 'Manage account details' : 'Hide account details';
+  });
   navButtons.forEach((button) => {
     button.addEventListener('click', handleNavClick);
   });
 
   registerNavButton.addEventListener('click', () => {
     if (state.currentUser && state.currentUser.name) {
-      showSection('account');
-      switchAccountTab('profile');
-      loadAccountData();
+      loadPrivateDashboard();
+      showDashboardView('overview');
     } else {
       showSection('register');
     }
@@ -723,8 +911,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   loginNavButton.addEventListener('click', () => showSection('login'));
   logoutNavButton.addEventListener('click', logoutUser);
 
-  document.getElementById('clearAccountButton').addEventListener('click', clearAccount);
+  dashboardNavItems.forEach((button) => {
+    button.addEventListener('click', async () => {
+      await loadPrivateDashboard();
+      showDashboardView(button.dataset.dashboardView);
+    });
+  });
+  document.querySelectorAll('.dashboard-text-btn').forEach((button) => {
+    button.addEventListener('click', () => showDashboardView(button.dataset.dashboardView));
+  });
+  document.getElementById('privateDashboardStartBtn').addEventListener('click', () => {
+    showDashboardView('assessment');
+    showAssessmentStep(1);
+  });
+  document.getElementById('dashboardLogoutBtn').addEventListener('click', logoutUser);
+  document.getElementById('privateSaveProfileBtn').addEventListener('click', savePrivateProfile);
 
+  moveExistingAssessmentIntoDashboard();
   await fetchCurrentUser();
-  showSection('home');
+  if (state.currentUser) {
+    await loadPrivateDashboard();
+    showDashboardView('overview');
+  } else {
+    showSection('home');
+  }
 });

@@ -8,6 +8,11 @@ from pathlib import Path
 from flask import Flask, jsonify, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
+try:
+    from .oop_system import SavingsAssessmentInput, SavingsAssessmentSystem
+except ImportError:
+    from oop_system import SavingsAssessmentInput, SavingsAssessmentSystem
+
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 USERS_PATH = DATA_DIR / "users.json"
@@ -49,56 +54,6 @@ def safe_float(value):
         return number if number >= 0 else -1
     except (TypeError, ValueError):
         return -1
-
-
-def calculate_monthly_income(allowance: float, frequency: str) -> float:
-    if frequency == "weekly":
-        return allowance * 4
-    if frequency == "every_2_weeks":
-        return allowance * 2
-    return allowance
-
-
-def calculate_total_expenses(expenses: dict) -> float:
-    return (
-        float(expenses.get("food", 0) or 0)
-        + float(expenses.get("transportation", 0) or 0)
-        + float(expenses.get("school", 0) or 0)
-        + float(expenses.get("internet", 0) or 0)
-        + float(expenses.get("personal", 0) or 0)
-        + float(expenses.get("other", 0) or 0)
-    )
-
-
-def calculate_required_monthly_savings(goal: float, current_savings: float, period: float) -> float:
-    if period <= 0:
-        return 0
-    remaining = goal - current_savings
-    if remaining <= 0:
-        return 0
-    return remaining / period
-
-
-def calculate_expected_savings(current_savings: float, planned: float, period: float) -> float:
-    return current_savings + (planned * period)
-
-
-def assess_goal(available_money: float, required_monthly_savings: float, expected_savings: float, goal_amount: float) -> str:
-    if goal_amount <= 0:
-        return "GREEN"
-    if available_money >= required_monthly_savings and expected_savings >= goal_amount:
-        return "GREEN"
-    if available_money > 0 and (expected_savings >= goal_amount * 0.8 or available_money >= required_monthly_savings * 0.8):
-        return "YELLOW"
-    return "RED"
-
-
-def recommendation_for(status: str) -> str:
-    if status == "GREEN":
-        return "Your current plan can support your savings goal. Try to save your planned amount consistently each month."
-    if status == "YELLOW":
-        return "Your goal may be difficult to reach within your selected period. Consider reducing some non-essential expenses or extending the saving period."
-    return "Your current available money may not support this goal within the selected period. Consider a smaller goal or a longer saving period."
 
 
 def get_current_user():
@@ -209,12 +164,12 @@ def process_assessment():
     student_name = (payload.get("studentName") or user.get("name", "")).strip()
     monthly_allowance = safe_float(payload.get("monthlyAllowance"))
     allowance_frequency = payload.get("allowanceFrequency") or "monthly"
-    food = safe_float(payload.get("food"))
-    transportation = safe_float(payload.get("transportation"))
-    school = safe_float(payload.get("school"))
-    internet = safe_float(payload.get("internet"))
-    personal = safe_float(payload.get("personal"))
-    other = safe_float(payload.get("other"))
+    food = safe_float(payload.get("food") or 0)
+    transportation = safe_float(payload.get("transportation") or 0)
+    school = safe_float(payload.get("school") or 0)
+    internet = safe_float(payload.get("internet") or 0)
+    personal = safe_float(payload.get("personal") or 0)
+    other = safe_float(payload.get("other") or 0)
     current_savings = safe_float(payload.get("currentSavings"))
     goal_purpose = payload.get("goalPurpose") or "Personal Goal"
     savings_goal = safe_float(payload.get("savingsGoal"))
@@ -228,57 +183,57 @@ def process_assessment():
     if saving_period <= 0:
         return jsonify({"success": False, "message": "Saving period must be greater than 0."}), 400
 
-    monthly_income = calculate_monthly_income(monthly_allowance, allowance_frequency)
-    total_expenses = calculate_total_expenses({
-        "food": food,
-        "transportation": transportation,
-        "school": school,
-        "internet": internet,
-        "personal": personal,
-        "other": other,
-    })
-    available_money = monthly_income - total_expenses
-    required_monthly_savings = calculate_required_monthly_savings(savings_goal, current_savings, saving_period)
-    expected_savings = calculate_expected_savings(current_savings, planned_monthly_savings, saving_period)
-    status = assess_goal(available_money, required_monthly_savings, expected_savings, savings_goal)
-    status_label = {
-        "GREEN": "GOAL ACHIEVABLE",
-        "YELLOW": "NEEDS ADJUSTMENT",
-        "RED": "GOAL NEEDS REVISION",
-    }.get(status, "GOAL ACHIEVABLE")
-
+    assessment_input = SavingsAssessmentInput(
+        student_name=student_name,
+        monthly_allowance=monthly_allowance,
+        allowance_frequency=allowance_frequency,
+        expenses={
+            "food": food,
+            "transportation": transportation,
+            "school": school,
+            "internet": internet,
+            "personal": personal,
+            "other": other,
+        },
+        current_savings=current_savings,
+        goal_purpose=goal_purpose,
+        savings_goal=savings_goal,
+        saving_period=saving_period,
+        planned_monthly_savings=planned_monthly_savings,
+    )
+    oop_result = SavingsAssessmentSystem(assessment_input).process().to_dict()
     result = {
-        "studentName": student_name,
-        "estimatedMonthlyIncome": monthly_income,
-        "totalMonthlyExpenses": total_expenses,
-        "availableMoney": available_money,
-        "currentSavings": current_savings,
-        "savingsGoal": savings_goal,
-        "requiredMonthlySavings": required_monthly_savings,
-        "plannedMonthlySavings": planned_monthly_savings,
-        "savingPeriod": saving_period,
-        "expectedSavings": expected_savings,
-        "goalPurpose": goal_purpose,
-        "status": status,
-        "statusLabel": status_label,
-        "recommendation": recommendation_for(status),
+        "studentName": oop_result["student_name"],
+        "estimatedMonthlyIncome": oop_result["estimated_monthly_income"],
+        "totalMonthlyExpenses": oop_result["total_monthly_expenses"],
+        "availableMoney": oop_result["available_money"],
+        "currentSavings": oop_result["current_savings"],
+        "savingsGoal": oop_result["savings_goal"],
+        "requiredMonthlySavings": oop_result["required_monthly_savings"],
+        "plannedMonthlySavings": oop_result["planned_monthly_savings"],
+        "savingPeriod": oop_result["saving_period"],
+        "expectedSavings": oop_result["expected_savings"],
+        "goalPurpose": oop_result["goal_purpose"],
+        "status": oop_result["status"],
+        "statusLabel": oop_result["status_label"],
+        "recommendation": oop_result["recommendation"],
     }
 
     assessment_record = {
         "user_name": user.get("name"),
         "user_email": user.get("email"),
         "date": datetime.now().strftime("%B %d, %Y"),
-        "monthly_income": monthly_income,
-        "total_expenses": total_expenses,
-        "available_money": available_money,
-        "required_monthly_savings": required_monthly_savings,
+        "monthly_income": result["estimatedMonthlyIncome"],
+        "total_expenses": result["totalMonthlyExpenses"],
+        "available_money": result["availableMoney"],
+        "required_monthly_savings": result["requiredMonthlySavings"],
         "current_savings": current_savings,
         "savings_goal": savings_goal,
         "goal_purpose": goal_purpose,
         "saving_period": saving_period,
         "planned_monthly_savings": planned_monthly_savings,
-        "expected_savings": expected_savings,
-        "assessment_status": status_label,
+        "expected_savings": result["expectedSavings"],
+        "assessment_status": result["statusLabel"],
     }
 
     assessments = read_json(ASSESSMENTS_PATH)

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Savings Assessment System</title>
+    <title>SaveSmart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
@@ -29,14 +29,11 @@
         <section id="home" class="section active">
           <div class="hero">
             <div class="hero-copy">
-              <p class="eyebrow">STUDENT SAVINGS ASSESSMENT</p>
+              <p class="eyebrow">SMARTER SAVING STARTS HERE</p>
               <h1>Make every peso<br />move you forward.</h1>
               <p class="lead">
                 Plan your savings, understand your spending, and see if your financial goal is achievable.
               </p>
-              <div class="cta-row">
-                <button id="registerHomeButton" class="primary-btn" data-target="register">Register</button>
-              </div>
             </div>
 
             <div class="hero-visual" aria-hidden="true">
@@ -49,12 +46,16 @@
               </div>
             </div>
           </div>
-          <div class="what-you-can-do">
-            <div class="steps-row">
-              <div class="step-card"><h3>PLAN</h3><p>Understand your monthly savings.</p></div>
-              <div class="step-card"><h3>CHECK</h3><p>See if your savings goal is achievable.</p></div>
-              <div class="step-card"><h3>TRACK</h3><p>Review your previous assessments.</p></div>
-            </div>
+          <div class="home-socials" aria-label="SaveSmart creator links">
+            <a class="social-logo" href="https://github.com/ashmstudio" target="_blank" rel="noreferrer" aria-label="Open GitHub profile" title="GitHub">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .7a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.4-5.5-6a4.7 4.7 0 0 1 1.2-3.2c-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.9.1 3.2a4.7 4.7 0 0 1 1.2 3.2c0 4.6-2.8 5.7-5.5 6 .4.3.7 1 .7 2v2.9c0 .3.2.7.8.6A12 12 0 0 0 12 .7Z" /></svg>
+            </a>
+            <a class="social-logo social-email" href="mailto:aisahmoso@gmail.com" aria-label="Send email" title="Email">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 3v9h18V8l-9 5.5L3 8Zm2-.5 7 4.3 7-4.3H5Z" /></svg>
+            </a>
+            <a class="social-logo" href="https://www.facebook.com/ash1t" target="_blank" rel="noreferrer" aria-label="Open Facebook profile" title="Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.6 1.7-1.6h1.8V4.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1V11H8v3h2.6v8h2.9Z" /></svg>
+            </a>
           </div>
         </section>
 
@@ -128,31 +129,54 @@
 
             <div id="assessmentWizard" class="assessment-wizard hidden">
               <div class="wizard-header">
-                <div class="step-indicator" id="stepIndicator">Step 1 of 6</div>
+                <div class="step-indicator" id="stepIndicator">Step 1 of 4</div>
               </div>
 
               <div class="assessment-step active" data-step="1">
                 <div class="section-header">
                   <p class="eyebrow">ASSESSMENT</p>
-                  <h2>Step 1 – Student Information</h2>
+                  <h2>Step 1 – Set Your Savings Goal</h2>
+                  <p>Tell us what you want to save for and how much you need.</p>
                 </div>
-                <div class="field-group">
-                  <label for="studentName">Student Name</label>
-                  <input id="studentName" name="studentName" type="text" placeholder="Student name" />
+                <div class="grid-two">
+                  <div class="field-group">
+                    <label for="goalPurpose">What are you saving for?</label>
+                    <select id="goalPurpose">
+                      <option value="School Expenses">School Expenses</option>
+                      <option value="Gadget / Laptop">Gadget / Laptop</option>
+                      <option value="Emergency Fund">Emergency Fund</option>
+                      <option value="Travel">Travel</option>
+                      <option value="Personal Goal">Personal Goal</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="savingsGoal">Savings goal</label>
+                    <input id="savingsGoal" type="number" min="0" step="0.01" placeholder="Enter target amount" />
+                  </div>
+                  <div class="field-group">
+                    <label for="savingPeriod">Target timeframe (months)</label>
+                    <input id="savingPeriod" type="number" min="1" step="1" placeholder="Enter number of months" />
+                  </div>
+                  <div class="field-group">
+                    <label for="currentSavings">Current savings</label>
+                    <input id="currentSavings" type="number" min="0" step="0.01" placeholder="Enter current amount" />
+                  </div>
                 </div>
               </div>
 
               <div class="assessment-step" data-step="2">
                 <div class="section-header">
                   <p class="eyebrow">ASSESSMENT</p>
-                  <h2>Step 2 – Allowance / Income</h2>
+                  <h2>Step 2 – Add Your Income</h2>
+                  <p>Enter the amount you usually receive and how often you receive it.</p>
                 </div>
                 <div class="field-group">
-                  <label for="monthlyAllowance">Monthly Allowance</label>
+                  <label for="monthlyAllowance">Income or allowance amount</label>
                   <input id="monthlyAllowance" name="monthlyAllowance" type="number" min="0" step="0.01" placeholder="Enter amount" />
                 </div>
                 <div class="field-group">
-                  <label for="allowanceFrequency">How often do you receive your allowance?</label>
+                  <label for="allowanceFrequency">How often do you receive this amount?</label>
                   <select id="allowanceFrequency" name="allowanceFrequency">
                     <option value="weekly">Weekly</option>
                     <option value="every_2_weeks">Every 2 weeks</option>
@@ -164,7 +188,8 @@
               <div class="assessment-step" data-step="3">
                 <div class="section-header">
                   <p class="eyebrow">ASSESSMENT</p>
-                  <h2>Step 3 – Monthly Expenses</h2>
+                  <h2>Step 3 – Add Monthly Expenses</h2>
+                  <p>Enter your usual monthly expenses. Use 0 for anything that does not apply.</p>
                 </div>
                 <div class="grid-two">
                   <div class="field-group">
@@ -197,43 +222,12 @@
               <div class="assessment-step" data-step="4">
                 <div class="section-header">
                   <p class="eyebrow">ASSESSMENT</p>
-                  <h2>Step 4 – Savings Goal</h2>
-                </div>
-                <div class="grid-two">
-                  <div class="field-group">
-                    <label for="currentSavings">Current Savings</label>
-                    <input id="currentSavings" type="number" min="0" step="0.01" placeholder="Enter amount" />
-                  </div>
-                  <div class="field-group">
-                    <label for="goalPurpose">What are you saving for?</label>
-                    <select id="goalPurpose">
-                      <option value="School Expenses">School Expenses</option>
-                      <option value="Gadget / Laptop">Gadget / Laptop</option>
-                      <option value="Emergency Fund">Emergency Fund</option>
-                      <option value="Travel">Travel</option>
-                      <option value="Personal Goal">Personal Goal</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div class="field-group">
-                    <label for="savingsGoal">Savings Goal</label>
-                    <input id="savingsGoal" type="number" min="0" step="0.01" placeholder="Enter amount" />
-                  </div>
-                  <div class="field-group">
-                    <label for="savingPeriod">Saving Period</label>
-                    <input id="savingPeriod" type="number" min="1" step="1" placeholder="Enter number" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="assessment-step" data-step="5">
-                <div class="section-header">
-                  <p class="eyebrow">ASSESSMENT</p>
-                  <h2>Step 5 – Savings Plan</h2>
+                  <h2>Step 4 – Choose Your Savings Plan</h2>
+                  <p>Enter how much you plan to save each month. We will compare it with your goal.</p>
                 </div>
                 <div class="field-group">
-                  <label for="plannedMonthlySavings">Planned Monthly Savings</label>
-                  <input id="plannedMonthlySavings" type="number" min="0" step="0.01" placeholder="Enter amount" />
+                  <label for="plannedMonthlySavings">Planned monthly savings</label>
+                  <input id="plannedMonthlySavings" type="number" min="0" step="0.01" placeholder="Enter planned amount" />
                 </div>
               </div>
 
@@ -241,14 +235,37 @@
 
               <div class="wizard-actions">
                 <button type="button" id="assessmentBackBtn" class="secondary-btn hidden">Back</button>
+                <button type="button" id="assessmentResetBtn" class="secondary-btn">Clear / Reset</button>
                 <button type="button" id="assessmentNextBtn" class="primary-btn">Next</button>
               </div>
             </div>
 
-            <div id="accountPanel" class="account-panel hidden">
-              <h3>My Account</h3>
-              <p id="accountName">Student</p>
-              <button id="clearAccountButton" class="secondary-btn small-btn">Clear Account</button>
+            <div id="accountPanel" class="account-panel assessment-dashboard hidden">
+              <div class="dashboard-heading">
+                <div>
+                  <p class="eyebrow">ACCOUNT DASHBOARD</p>
+                  <h3>Welcome back, <span id="accountName">Student</span></h3>
+                  <p>Review your profile and keep your savings plan moving.</p>
+                </div>
+                <span class="dashboard-status">Active</span>
+              </div>
+              <div class="dashboard-metrics">
+                <div class="dashboard-metric">
+                  <span>Profile</span>
+                  <strong id="assessmentDashboardEmail">Ready</strong>
+                </div>
+                <div class="dashboard-metric">
+                  <span>Assessments</span>
+                  <strong id="assessmentDashboardHistory">0 saved</strong>
+                </div>
+                <div class="dashboard-metric">
+                  <span>Next step</span>
+                  <strong>Complete your plan</strong>
+                </div>
+              </div>
+              <div class="dashboard-actions">
+                <button id="openAccountDashboardBtn" type="button" class="secondary-btn">Profile Dashboard</button>
+              </div>
             </div>
 
             <div class="history-panel">
@@ -289,19 +306,59 @@
           </div>
         </section>
 
-        <section id="account" class="section">
+        <section id="legacy-account" class="section legacy-account">
           <div class="panel">
             <div class="section-header compact-header">
-              <p class="eyebrow">MY ACCOUNT</p>
-              <h2>Student Profile</h2>
+              <p class="eyebrow">SAVESMART</p>
+              <h2>Good evening, <span id="dashboardFirstName">there</span>.</h2>
+              <p>Ready to work on your savings?</p>
             </div>
 
-            <div class="account-tabs" aria-label="Account sections">
-              <button type="button" class="account-tab active" data-account-tab="profile">PROFILE</button>
-              <button type="button" class="account-tab" data-account-tab="savings">SAVINGS</button>
-              <button type="button" class="account-tab" data-account-tab="history">HISTORY</button>
+            <div class="dashboard-hero">
+              <div>
+                <h3>Build a clearer savings plan.</h3>
+                <p>Take a short assessment to understand your goals, spending, and saving capacity.</p>
+              </div>
+              <button id="dashboardStartAssessmentBtn" type="button" class="primary-btn">Start Assessment</button>
             </div>
 
+            <div class="journey-section">
+              <div class="dashboard-section-heading">
+                <p class="eyebrow">YOUR SAVING JOURNEY</p>
+              </div>
+              <div class="journey-grid">
+                <article class="journey-card">
+                  <span class="journey-label">Assessment</span>
+                  <strong id="journeyAssessmentStatus">Not started</strong>
+                  <p id="journeyAssessmentHint">Begin with your first assessment.</p>
+                </article>
+                <article class="journey-card">
+                  <span class="journey-label">Savings Goal</span>
+                  <strong id="journeyGoalStatus">Not set</strong>
+                  <p id="journeyGoalHint">Your goal will appear here.</p>
+                </article>
+                <article class="journey-card">
+                  <span class="journey-label">Savings Plan</span>
+                  <strong id="journeyPlanStatus">Not created</strong>
+                  <p id="journeyPlanHint">Complete an assessment to create one.</p>
+                </article>
+              </div>
+            </div>
+
+            <div class="recent-activity">
+              <div class="dashboard-section-heading">
+                <p class="eyebrow">RECENT ACTIVITY</p>
+              </div>
+              <div id="dashboardActivityEmpty" class="activity-empty">
+                <strong>No activity yet.</strong>
+                <span>Complete your assessment to get started.</span>
+              </div>
+              <div id="dashboardActivityList" class="dashboard-activity-list hidden"></div>
+            </div>
+
+            <button id="manageAccountBtn" type="button" class="manage-account-toggle">Manage account details</button>
+
+            <div id="accountManagement" class="account-management hidden">
             <div id="accountProfileTab" class="account-tab-panel active">
               <div class="account-card">
                 <h3>Profile</h3>
@@ -311,9 +368,10 @@
                   <div class="account-row"><span>Account registration date</span><strong id="accountRegistrationDate">-</strong></div>
                   <div class="account-row"><span>Account status</span><strong id="accountStatus">Registered</strong></div>
                 </div>
+                <button id="editProfileBtn" type="button" class="secondary-btn account-edit-btn">Edit Profile</button>
               </div>
 
-              <div id="profileEditForm" class="profile-edit-box">
+              <div id="profileEditForm" class="profile-edit-box hidden">
                 <h3>Edit Profile</h3>
                 <div class="field-group">
                   <label for="editAccountName">Full Name</label>
@@ -325,10 +383,22 @@
                 </div>
                 <div class="account-action-row">
                   <button id="saveProfileBtn" type="button" class="primary-btn">Save Changes</button>
+                  <button id="cancelProfileBtn" type="button" class="secondary-btn">Cancel</button>
                 </div>
                 <div id="accountProfileMessage" class="form-message" aria-live="polite"></div>
               </div>
             </div>
+
+            <div class="account-layout">
+              <aside class="account-sidebar" aria-label="Account menu">
+                <span class="sidebar-label">ACCOUNT MENU</span>
+                <button type="button" class="account-tab active" data-account-tab="profile">Profile</button>
+                <button type="button" class="account-tab" data-account-tab="savings">Savings</button>
+                <button type="button" class="account-tab" data-account-tab="history">History</button>
+                <button type="button" id="accountActionsMenuBtn" class="account-menu-btn">Account Actions</button>
+              </aside>
+
+              <div class="account-content">
 
             <div id="accountSavingsTab" class="account-tab-panel">
               <div class="account-card">
@@ -360,12 +430,104 @@
               </div>
             </div>
 
-            <div class="account-actions">
-              <button id="takeAssessmentBtn" type="button" class="primary-btn">Take Assessment</button>
-              <button id="accountLogoutBtn" type="button" class="secondary-btn">Log Out</button>
-              <button id="clearAssessmentDataBtn" type="button" class="secondary-btn">Clear Assessment Data</button>
-              <button id="clearAccountBtn" type="button" class="secondary-btn">Clear Account</button>
-              <button id="backToHomeBtn" type="button" class="primary-btn">Back to Home</button>
+                <div id="accountActionsPanel" class="account-actions-panel hidden">
+                  <div class="account-actions-section">
+                    <div class="section-divider">
+                      <p class="eyebrow">ACCOUNT ACTIONS</p>
+                    </div>
+                    <div class="account-actions">
+                      <button id="accountLogoutBtn" type="button" class="secondary-btn">Log Out</button>
+                    </div>
+                  </div>
+
+                  <div class="danger-zone">
+                    <div class="section-divider">
+                      <p class="eyebrow">DANGER ZONE</p>
+                    </div>
+                    <p>Clear saved assessment data or permanently remove your SaveSmart account.</p>
+                    <div class="danger-actions">
+                      <button id="clearAssessmentDataBtn" type="button" class="secondary-btn">Clear Assessment Data</button>
+                      <button id="clearAccountBtn" type="button" class="secondary-btn">Clear Account</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="account" class="section private-dashboard-section">
+          <div class="private-dashboard">
+            <aside class="dashboard-sidebar" aria-label="Private dashboard navigation">
+              <div class="dashboard-brand">SaveSmart</div>
+              <div class="dashboard-user">
+                <div id="dashboardAvatar" class="dashboard-avatar">S</div>
+                <div><strong id="dashboardUserName">Student</strong><span id="dashboardUserEmail">Account</span></div>
+              </div>
+              <nav class="dashboard-nav">
+                <button type="button" class="dashboard-nav-item active" data-dashboard-view="overview"><span>▦</span>Dashboard</button>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="assessment"><span>📝</span>Assessment</button>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="plan"><span>🎯</span>Savings Plan</button>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="goals"><span>💰</span>Savings Goals</button>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="progress"><span>📊</span>Progress</button>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="history"><span>🕘</span>History</button>
+                <div class="dashboard-nav-divider"></div>
+                <button type="button" class="dashboard-nav-item" data-dashboard-view="profile"><span>⚙</span>Profile &amp; Settings</button>
+              </nav>
+              <button id="dashboardLogoutBtn" type="button" class="dashboard-logout"><span>↪</span>Log Out</button>
+            </aside>
+
+            <div class="dashboard-main">
+              <section class="dashboard-view active" data-dashboard-panel="overview">
+                <div class="dashboard-topline"><div><h2>Welcome, <span id="privateDashboardFirstName">there</span></h2></div><span class="dashboard-date" id="dashboardDate"></span></div>
+                <button id="privateDashboardStartBtn" type="button" class="dashboard-start-btn"><span>Start Assessment</span><strong>→</strong></button>
+                <div class="dashboard-status-grid">
+                  <article class="dashboard-status-card"><span>Assessment</span><strong id="privateAssessmentStatus">Not completed</strong><small id="privateAssessmentHint"></small></article>
+                  <article class="dashboard-status-card"><span>Savings Plan</span><strong id="privatePlanStatus">Not created</strong><small id="privatePlanHint"></small></article>
+                  <article class="dashboard-status-card"><span>Savings Goal</span><strong id="privateGoalStatus">Not set</strong><small id="privateGoalHint"></small></article>
+                  <article class="dashboard-status-card"><span>Progress</span><strong id="privateProgressStatus">Not started</strong><small id="privateProgressHint"></small></article>
+                </div>
+                <div class="dashboard-activity-block"><div class="dashboard-view-heading"><div><p class="dashboard-kicker">RECENT ACTIVITY</p><h3>Your latest activity</h3></div><button type="button" class="dashboard-text-btn" data-dashboard-view="history">View history</button></div><div id="privateActivityEmpty" class="dashboard-empty">No activity yet. Complete your assessment to get started.</div><div id="privateActivityList" class="private-activity-list hidden"></div></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="assessment">
+                <div class="dashboard-view-heading"><div><h2>Assessment</h2></div></div>
+                <div id="privateAssessmentWizardHost"></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="result">
+                <div id="privateResultHost"></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="plan">
+                <div class="dashboard-view-heading"><div><h2>Savings Plan</h2></div></div>
+                <div id="privatePlanEmpty" class="dashboard-empty">Complete your assessment first to create your savings plan.</div>
+                <div id="privatePlanContent" class="dashboard-data-grid hidden"><div><span>Goal purpose</span><strong id="privatePlanPurpose">-</strong></div><div><span>Monthly savings</span><strong id="privatePlanAmount">-</strong></div><div><span>Saving period</span><strong id="privatePlanPeriod">-</strong></div><div><span>Required monthly savings</span><strong id="privatePlanRequired">-</strong></div></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="goals">
+                <div class="dashboard-view-heading"><div><h2>Savings Goals</h2></div></div>
+                <div id="privateGoalEmpty" class="dashboard-empty">Complete your assessment first to set a savings goal.</div>
+                <div id="privateGoalContent" class="dashboard-goal-card hidden"><span id="privateGoalPurpose">Personal goal</span><strong id="privateGoalAmount">-</strong><small id="privateGoalPeriod">-</small></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="progress">
+                <div class="dashboard-view-heading"><div><h2>Progress</h2></div></div>
+                <div id="privateProgressEmpty" class="dashboard-empty">No progress to show yet. Complete an assessment to begin tracking.</div>
+                <div id="privateProgressContent" class="dashboard-progress-card hidden"><div class="dashboard-progress-track"><span id="privateProgressBar"></span></div><strong id="privateProgressLabel">-</strong></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="history">
+                <div class="dashboard-view-heading"><div><h2>History</h2></div></div>
+                <div id="privateHistoryList" class="private-history-list"></div>
+              </section>
+
+              <section class="dashboard-view" data-dashboard-panel="profile">
+                <div class="dashboard-view-heading"><div><h2>Profile &amp; Settings</h2></div></div>
+                <div class="dashboard-profile-card"><div><span>Full Name</span><strong id="privateProfileName">-</strong></div><div><span>Email</span><strong id="privateProfileEmail">-</strong></div><div><span>Registration date</span><strong id="privateProfileDate">-</strong></div></div>
+                <div class="dashboard-profile-edit"><h3>Edit Profile</h3><div class="grid-two"><div class="field-group"><label for="privateEditName">Full Name</label><input id="privateEditName" type="text" /></div><div class="field-group"><label for="privateEditEmail">Email</label><input id="privateEditEmail" type="email" /></div></div><button id="privateSaveProfileBtn" type="button" class="primary-btn">Save Changes</button><div id="privateProfileMessage" class="form-message" aria-live="polite"></div></div>
+              </section>
             </div>
           </div>
         </section>
@@ -380,20 +542,26 @@
             <div class="steps-row">
               <div class="step-card">
                 <span class="step-number">01</span>
-                <h3>REGISTER</h3>
-                <p>Create your account to begin.</p>
+                <h3>SET YOUR GOAL</h3>
+                <p>Choose what you want to save for and set a target timeframe.</p>
               </div>
               <div class="step-card">
                 <span class="step-number">02</span>
-                <h3>ASSESS</h3>
-                <p>Enter your allowance, expenses, savings, and goal.</p>
+                <h3>SHARE YOUR NUMBERS</h3>
+                <p>Enter the financial information needed for your assessment.</p>
               </div>
               <div class="step-card">
                 <span class="step-number">03</span>
-                <h3>PLAN</h3>
-                <p>Get your savings assessment and recommendation.</p>
+                <h3>COMPLETE THE ASSESSMENT</h3>
+                <p>Let SaveSmart compare your plan with your available money.</p>
+              </div>
+              <div class="step-card">
+                <span class="step-number">04</span>
+                <h3>REVIEW YOUR RESULT</h3>
+                <p>Receive a clear result and a practical recommendation.</p>
               </div>
             </div>
+
           </div>
         </section>
 
@@ -401,20 +569,25 @@
           <div class="panel narrow-panel">
             <div class="section-header compact-header">
               <p class="eyebrow">ABOUT</p>
-              <h2>Student Savings Assessment System</h2>
-              <p>A simple tool that helps students understand their spending and savings goals.</p>
-              <div class="creator-block">
-                <span>CREATED BY</span>
-                <h3>ASH MUSO</h3>
+              <h2>About SaveSmart</h2>
+              <p>SaveSmart is a simple financial planning tool that helps you understand your savings goals, evaluate your spending, and make more informed decisions about your money.</p>
+              <div class="about-details">
+                <h3>Why SaveSmart</h3>
+                <p>Understand your savings, set realistic goals, and see whether your target is achievable before you commit to a plan.</p>
+                <h3>How It Helps</h3>
+                <p><strong>Set a Goal:</strong> Enter the amount you want to save and your target timeframe.</p>
+                <p><strong>Understand Your Numbers:</strong> Provide the income, savings, and spending details that shape your plan.</p>
+                <p><strong>See Your Assessment:</strong> Get an easy-to-understand result that helps you decide what to do next.</p>
+                <h3>Our Approach</h3>
+                <p>SaveSmart makes financial planning easier to understand through a focused assessment experience and clear, useful feedback.</p>
               </div>
-              <p>For questions or if you experience any problems with the system, please contact the creator.</p>
             </div>
           </div>
         </section>
       </main>
-      <footer class="site-footer">All Rights Reserved | Ash Muso</footer>
+      <footer class="site-footer">All right reserved I Ash Muso</footer>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js', v='2') }}"></script>
+    <script src="{{ url_for('static', filename='script.js', v='9') }}"></script>
   </body>
 </html>

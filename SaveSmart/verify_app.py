@@ -24,7 +24,7 @@ home_request = urllib.request.Request(base + "/", method="GET")
 with opener.open(home_request) as response:
     home_html = response.read().decode("utf-8")
     home_status = response.status
-print("HOME_OK", home_status == 200 and "Student Savings Assessment System" in home_html)
+print("HOME_OK", home_status == 200 and "<title>SaveSmart</title>" in home_html and "SaveSmart" in home_html)
 
 register_payload = {
     "name": "Ash Muso",
